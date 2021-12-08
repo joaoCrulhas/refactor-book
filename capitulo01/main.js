@@ -46,8 +46,17 @@ const amountFor = (aPerformance) => {
 }
 const playFor = (perf) => {
     return playsDB[perf.playID];
-
 }
+
+const getVolumeCredits = aPerformance => {
+    let result = 0;
+    result += Math.max(aPerformance.audience - 30, 0);
+    if(playFor(aPerformance).type === 'comedy') {
+        result += Math.floor(aPerformance.audience/5)
+    }
+    return result;
+}
+
 const statement = (invoice) => {
     let totalAmount = 0;
     let volumeCredits = 0;
@@ -57,10 +66,7 @@ const statement = (invoice) => {
         minimumFractionDigits: 2}).format;
 
     for (let perf of invoice.performances) {
-        volumeCredits += Math.max(perf.audience - 30, 0);
-        if(playFor(perf).type === 'comedy') {
-            volumeCredits += Math.floor(perf.audience/5)
-        }
+        volumeCredits = getVolumeCredits(perf)
         result += `${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience} seats)\n`;
         totalAmount += amountFor(perf);
     }
