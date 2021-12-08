@@ -23,9 +23,9 @@ const invoicesDB = [
     }
 ]
 
-const amountFor = (aPerformance, play) => {
+const amountFor = (aPerformance) => {
     let result = 0;
-    switch (play.type) {
+    switch (playFor(aPerformance).type) {
         case "tragedy":
             result = 40000;
             if(aPerformance.audience > 30) {
@@ -40,7 +40,7 @@ const amountFor = (aPerformance, play) => {
             }
             break;
         default:
-            throw new Error(`Unknown type ${play.type}`);
+            throw new Error(`Unknown type ${playFor(aPerformance.playID).type}`);
     }
     return result;
 }
@@ -48,7 +48,7 @@ const playFor = (perf) => {
     return playsDB[perf.playID];
 
 }
-const statement = (invoice, plays) => {
+const statement = (invoice) => {
     let totalAmount = 0;
     let volumeCredits = 0;
     let result = `Statement for invoice ${invoice.customer}\n`;
@@ -57,9 +57,8 @@ const statement = (invoice, plays) => {
         minimumFractionDigits: 2}).format;
 
     for (let perf of invoice.performances) {
-        // const play = playFor(perf);
         volumeCredits += Math.max(perf.audience - 30, 0);
-        let thisAmount = amountFor(perf, playFor(perf));
+        let thisAmount = amountFor(perf);
         if(playFor(perf).type === 'comedy') {
             volumeCredits += Math.floor(perf.audience/5)
         }
@@ -71,4 +70,4 @@ const statement = (invoice, plays) => {
     return result;
 }
 
-console.log(statement(invoicesDB[0], playsDB));
+console.log(statement(invoicesDB[0]));
