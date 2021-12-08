@@ -44,6 +44,10 @@ const amountFor = (aPerformance, play) => {
     }
     return result;
 }
+const playFor = (perf) => {
+    return playsDB[perf.playID];
+
+}
 const statement = (invoice, plays) => {
     let totalAmount = 0;
     let volumeCredits = 0;
@@ -53,7 +57,7 @@ const statement = (invoice, plays) => {
         minimumFractionDigits: 2}).format;
 
     for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
+        const play = playFor(perf);
         volumeCredits += Math.max(perf.audience - 30, 0);
         let thisAmount = amountFor(perf, play);
         if(play.type === 'comedy') {
