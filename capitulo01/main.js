@@ -80,7 +80,6 @@ const getTotalAmount = (invoice) => {
     return result;
 }
 const statement = (invoice) => {
-    let totalAmount = 0;
     let result = `Statement for invoice ${invoice.customer}\n`;
     for (let perf of invoice.performances) {
         result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
