@@ -69,7 +69,7 @@ const statement = (invoice) => {
     let volumeCredits = 0;
     let result = `Statement for invoice ${invoice.customer}\n`;
     for (let perf of invoice.performances) {
-        volumeCredits = getVolumeCredits(perf)
+        volumeCredits += getVolumeCredits(perf)
         result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
         totalAmount += amountFor(perf);
     }
