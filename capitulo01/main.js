@@ -57,7 +57,7 @@ const getVolumeCredits = aPerformance => {
     return result;
 }
 
-const formatANumber = (number) => {
+const usd = (number) => {
     const format = new Intl.NumberFormat("en-US", {style: "currency",
         currency: "USD",
         minimumFractionDigits: 2}).format
@@ -68,14 +68,12 @@ const statement = (invoice) => {
     let totalAmount = 0;
     let volumeCredits = 0;
     let result = `Statement for invoice ${invoice.customer}\n`;
-    ;
-
     for (let perf of invoice.performances) {
         volumeCredits = getVolumeCredits(perf)
-        result += `${playFor(perf).name}: ${formatANumber(amountFor(perf)/100)} (${perf.audience} seats)\n`;
+        result += `${playFor(perf).name}: ${usd(amountFor(perf)/100)} (${perf.audience} seats)\n`;
         totalAmount += amountFor(perf);
     }
-    result += `Amount owned is ${formatANumber(totalAmount/100)}\n`;
+    result += `Amount owned is ${usd(totalAmount/100)}\n`;
     result += `You earned ${volumeCredits} credits \n`;
     return result;
 }
