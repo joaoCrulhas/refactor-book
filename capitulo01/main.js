@@ -61,7 +61,7 @@ const usd = (number) => {
     const format = new Intl.NumberFormat("en-US", {style: "currency",
         currency: "USD",
         minimumFractionDigits: 2}).format
-    return format(number);
+    return format(number/100);
 }
 
 const statement = (invoice) => {
@@ -70,10 +70,10 @@ const statement = (invoice) => {
     let result = `Statement for invoice ${invoice.customer}\n`;
     for (let perf of invoice.performances) {
         volumeCredits = getVolumeCredits(perf)
-        result += `${playFor(perf).name}: ${usd(amountFor(perf)/100)} (${perf.audience} seats)\n`;
+        result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
         totalAmount += amountFor(perf);
     }
-    result += `Amount owned is ${usd(totalAmount/100)}\n`;
+    result += `Amount owned is ${usd(totalAmount)}\n`;
     result += `You earned ${volumeCredits} credits \n`;
     return result;
 }
