@@ -65,19 +65,15 @@ const usd = number => {
 }
 
 const getTotalVolumeCredits = data => {
-    let volumeCredits = 0;
-    for(let perf of data.performances) {
-        volumeCredits += perf.volumeCredits
-    }
-    return volumeCredits;
+    return data.performances.reduce((pv, cv, ci) => {
+        return pv + cv.volumeCredits
+    }, 0);
 }
 
 const getTotalAmount = data => {
-    let result = 0;
-    for (let perf of data.performances) {
-        result += perf.amount;
-    }
-    return result;
+    return data.performances.reduce((pv, cv, ci) => {
+        return pv + cv.amount
+    }, 0);
 }
 
 const renderPlainText = statementData => {
