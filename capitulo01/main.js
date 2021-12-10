@@ -44,7 +44,7 @@ const amountFor = (aPerformance) => {
     }
     return result;
 }
-const playFor = (perf) => {
+const playFor = perf => {
     return playsDB[perf.playID];
 }
 
@@ -57,14 +57,14 @@ const getVolumeCredits = aPerformance => {
     return result;
 }
 
-const usd = (number) => {
+const usd = number => {
     const format = new Intl.NumberFormat("en-US", {style: "currency",
         currency: "USD",
         minimumFractionDigits: 2}).format
     return format(number/100);
 }
 
-const getTotalVolumeCredits = (invoice) => {
+const getTotalVolumeCredits = invoice => {
     let volumeCredits = 0;
     for(let perf of invoice.performances) {
         volumeCredits += getVolumeCredits(perf)
@@ -72,7 +72,7 @@ const getTotalVolumeCredits = (invoice) => {
     return volumeCredits;
 }
 
-const getTotalAmount = (invoice) => {
+const getTotalAmount = invoice => {
     let result = 0;
     for (let perf of invoice.performances) {
         result += amountFor(perf);
@@ -80,17 +80,19 @@ const getTotalAmount = (invoice) => {
     return result;
 }
 
-const renderPlainText = (invoice, plays) => {
-    let result = `Statement for invoice ${invoice.customer}\n`;
-    for (let perf of invoice.performances) {
+const renderPlainText = statementData => {
+    let result = `Statement for invoice ${statementData.customer}\n`;
+    for (let perf of statementData.performances) {
         result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
     }
-    result += `Amount owned is ${usd(getTotalAmount(invoice))}\n`;
-    result += `You earned ${getTotalVolumeCredits(invoice)} credits \n`;
+    result += `Amount owned is ${usd(getTotalAmount(statementData))}\n`;
+    result += `You earned ${getTotalVolumeCredits(statementData)} credits \n`;
     return result;
 }
 const statement = (invoice) => {
-    return renderPlainText(invoice,null);
+    const { customer, performances } = invoice;
+    const statementData = { customer, performances };
+    return renderPlainText(statementData);
 }
 
 console.log(statement(invoicesDB[0]));
