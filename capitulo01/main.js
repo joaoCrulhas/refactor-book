@@ -79,7 +79,8 @@ const getTotalAmount = (invoice) => {
     }
     return result;
 }
-const statement = (invoice) => {
+
+const renderPlainText = (invoice, plays) => {
     let result = `Statement for invoice ${invoice.customer}\n`;
     for (let perf of invoice.performances) {
         result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
@@ -87,6 +88,9 @@ const statement = (invoice) => {
     result += `Amount owned is ${usd(getTotalAmount(invoice))}\n`;
     result += `You earned ${getTotalVolumeCredits(invoice)} credits \n`;
     return result;
+}
+const statement = (invoice) => {
+    return renderPlainText(invoice,null);
 }
 
 console.log(statement(invoicesDB[0]));
