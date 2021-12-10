@@ -92,7 +92,13 @@ const renderPlainText = statementData => {
 const statement = (invoice) => {
     const { customer, performances } = invoice;
     const statementData = { customer, performances };
+    statementData.performances = statementData.performances.map(addPerformanceInfo);
     return renderPlainText(statementData);
 }
 
+const addPerformanceInfo = performance => {
+    const result = Object.assign({}, performance);
+    result.play = playFor(performance);
+    return result;
+}
 console.log(statement(invoicesDB[0]));
