@@ -25,7 +25,7 @@ const invoicesDB = [
 
 const amountFor = (aPerformance) => {
     let result = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
         case "tragedy":
             result = 40000;
             if(aPerformance.audience > 30) {
@@ -51,7 +51,7 @@ const playFor = perf => {
 const getVolumeCredits = aPerformance => {
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
-    if(playFor(aPerformance).type === 'comedy') {
+    if(aPerformance.play.type === 'comedy') {
         result += Math.floor(aPerformance.audience/5)
     }
     return result;
@@ -64,18 +64,18 @@ const usd = number => {
     return format(number/100);
 }
 
-const getTotalVolumeCredits = invoice => {
+const getTotalVolumeCredits = data => {
     let volumeCredits = 0;
-    for(let perf of invoice.performances) {
-        volumeCredits += getVolumeCredits(perf)
+    for(let perf of data.performances) {
+        volumeCredits += perf.volumeCredits
     }
     return volumeCredits;
 }
 
-const getTotalAmount = invoice => {
+const getTotalAmount = data => {
     let result = 0;
-    for (let perf of invoice.performances) {
-        result += amountFor(perf);
+    for (let perf of data.performances) {
+        result += perf.amount;
     }
     return result;
 }
@@ -83,22 +83,26 @@ const getTotalAmount = invoice => {
 const renderPlainText = statementData => {
     let result = `Statement for invoice ${statementData.customer}\n`;
     for (let perf of statementData.performances) {
-        result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
+        result += `${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats)\n`;
     }
-    result += `Amount owned is ${usd(getTotalAmount(statementData))}\n`;
-    result += `You earned ${getTotalVolumeCredits(statementData)} credits \n`;
+    result += `Amount owned is ${usd(statementData.totalAmount)}\n`;
+    result += `You earned ${statementData.totalVolumeCredits} credits \n`;
     return result;
 }
 const statement = (invoice) => {
     const { customer, performances } = invoice;
     const statementData = { customer, performances };
     statementData.performances = statementData.performances.map(addPerformanceInfo);
+    statementData.totalAmount = getTotalAmount(statementData)
+    statementData.totalVolumeCredits = getTotalVolumeCredits(statementData)
     return renderPlainText(statementData);
 }
 
 const addPerformanceInfo = performance => {
     const result = Object.assign({}, performance);
     result.play = playFor(performance);
+    result.amount = amountFor(result);
+    result.volumeCredits = getVolumeCredits(result);
     return result;
 }
 console.log(statement(invoicesDB[0]));
