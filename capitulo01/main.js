@@ -52,5 +52,4 @@ const renderHtml = statementData => {
     return result;
 }
 
-console.log(statement(invoicesDB[0]));
 console.log(renderHtmlStatement(invoicesDB[0]));
