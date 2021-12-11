@@ -86,12 +86,16 @@ const renderPlainText = statementData => {
     return result;
 }
 const statement = (invoice) => {
+    return renderPlainText(createStatement(invoice));
+}
+
+const createStatement = (invoice) => {
     const { customer, performances } = invoice;
     const statementData = { customer, performances };
     statementData.performances = statementData.performances.map(addPerformanceInfo);
-    statementData.totalAmount = getTotalAmount(statementData)
-    statementData.totalVolumeCredits = getTotalVolumeCredits(statementData)
-    return renderPlainText(statementData);
+    statementData.totalAmount = getTotalAmount(statementData);
+    statementData.totalVolumeCredits = getTotalVolumeCredits(statementData);
+    return statementData;
 }
 
 const addPerformanceInfo = performance => {
