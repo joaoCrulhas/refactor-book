@@ -1,3 +1,4 @@
+const {PerformanceCalculator} = require("./performance-calculator");
 const playsDB = {
     "hamlet": {"name": "Hamlet", "type": "tragedy"},
     "as-like": {"name": "As You Like It", "type": "comedy"},
@@ -23,6 +24,7 @@ const getTotalAmount = data => {
         return pv + cv.amount
     }, 0);
 }
+
 const addPerformanceInfo = performance => {
     const result = Object.assign({}, performance);
     result.play = playFor(performance);
@@ -31,37 +33,15 @@ const addPerformanceInfo = performance => {
     return result;
 }
 const amountFor = (aPerformance) => {
-    let result = 0;
-    switch (aPerformance.play.type) {
-        case "tragedy":
-            result = 40000;
-            if(aPerformance.audience > 30) {
-                result += 1000 * (aPerformance.audience - 30);
-            }
-            break;
-
-        case "comedy":
-            result = 30000;
-            if(aPerformance.audience > 20) {
-                result += 10000 + 500 * (aPerformance.audience - 20);
-            }
-            break;
-        default:
-            throw new Error(`Unknown type ${playFor(aPerformance.playID).type}`);
-    }
-    return result;
+    const performanceCalculator = new PerformanceCalculator(aPerformance, aPerformance.play)
+    return performanceCalculator.getAmount();
 }
 const playFor = perf => {
     return playsDB[perf.playID];
 }
 const getVolumeCredits = aPerformance => {
-    let result = 0;
-    result += Math.max(aPerformance.audience - 30, 0);
-    if(aPerformance.play.type === 'comedy') {
-        result += Math.floor(aPerformance.audience/5)
-    }
-    return result;
+    const performanceCalculator = new PerformanceCalculator(aPerformance, aPerformance.play)
+    return performanceCalculator.getVolumeCredits();
 }
-
 
 module.exports = { createStatement }
