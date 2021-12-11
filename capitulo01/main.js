@@ -38,4 +38,19 @@ const statement = (invoice) => {
     return renderPlainText(createStatement(invoice));
 }
 
+const renderHtmlStatement = (invoice) => {
+    return renderHtml(createStatement(invoice))
+}
+
+const renderHtml = statementData => {
+    let result = `<p>Statement for invoice ${statementData.customer}</p>`;
+    for (let perf of statementData.performances) {
+        result += `<p>${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats)</p>`;
+    }
+    result += `<p>Amount owned is ${usd(statementData.totalAmount)}</p>`;
+    result += `<p>You earned ${statementData.totalVolumeCredits} credits </p>`;
+    return result;
+}
+
 console.log(statement(invoicesDB[0]));
+console.log(renderHtmlStatement(invoicesDB[0]));
